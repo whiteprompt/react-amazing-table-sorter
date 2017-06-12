@@ -1,5 +1,5 @@
 {
-  "name": "@whiteprompt/react-amazing-table-sorter",
+  "name": "react-amazing-table-sorter",
   "description": "Sort table rows by multiple columns",
   "author": "Sebastian Azagra <sebastian.azagra@whiteprompt.com>",
   "version": "0.0.1",
