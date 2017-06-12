@@ -14,7 +14,7 @@ const config = {
   paths: {
     dist: path.join(ROOT_PATH, 'dist'),
     src: path.join(ROOT_PATH, 'src'),
-    docs: path.join(ROOT_PATH, 'docs'),
+    myComponent: path.join(ROOT_PATH, 'my-component'),
     ghPages: path.join(ROOT_PATH, 'gh-pages')
   },
   filename: 'boilerplate',
@@ -32,7 +32,7 @@ const common = {
         enforce: 'pre',
         use: 'eslint-loader',
         include: [
-          config.paths.docs,
+          config.paths.myComponent,
           config.paths.src
         ]
       },
@@ -76,7 +76,7 @@ const siteCommon = {
 const dev = merge(common, siteCommon, {
   devtool: 'eval-source-map',
   entry: {
-    docs: [config.paths.docs]
+    myComponent: [config.paths.myComponent]
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -99,7 +99,7 @@ const dev = merge(common, siteCommon, {
           }
         },
         include: [
-          config.paths.docs,
+          config.paths.myComponent,
           config.paths.src
         ]
       }
@@ -117,7 +117,7 @@ const dev = merge(common, siteCommon, {
 
 const ghPages = merge(common, siteCommon, {
   entry: {
-    app: config.paths.docs
+    app: config.paths.myComponent
   },
   output: {
     path: config.paths.ghPages,
@@ -160,7 +160,7 @@ const ghPages = merge(common, siteCommon, {
         test: /\.js$/,
         use: 'babel-loader',
         include: [
-          config.paths.docs,
+          config.paths.myComponent,
           config.paths.src
         ]
       }
