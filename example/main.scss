@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  cursor: default;
+  color: #555;
+  font-family: sans-serif;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td, th {
+    padding: 15px;
+    border-bottom: 1px solid #EEE;
+  }
+
+  th {
+    background-color: #F8F8F8;
+    text-align: left;
+  }
+
+  tr:nth-of-type(even) td {
+    background-color: #FAFAFA;
+  }
+}

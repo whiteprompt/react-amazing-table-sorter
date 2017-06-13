@@ -14,7 +14,7 @@ const config = {
   paths: {
     dist: path.join(ROOT_PATH, 'dist'),
     src: path.join(ROOT_PATH, 'src'),
-    myComponent: path.join(ROOT_PATH, 'my-component'),
+    example: path.join(ROOT_PATH, 'example'),
     ghPages: path.join(ROOT_PATH, 'gh-pages')
   },
   filename: 'boilerplate',
@@ -23,16 +23,16 @@ const config = {
 
 const common = {
   resolve: {
-    extensions: ['.js', '.css', '.png', '.jpg']
+    extensions: ['.jsx', '.js', '.css', '.scss', '.png', '.jpg']
   },
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         enforce: 'pre',
-        use: 'eslint-loader',
+        use: 'babel-loader',
         include: [
-          config.paths.myComponent,
+          config.paths.example,
           config.paths.src
         ]
       },
@@ -48,11 +48,20 @@ const common = {
             limit: 10000
           }
         }
+      },
+      {
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          //resolve-url-loader may be chained before sass-loader if necessary
+          use: ['css-loader', 'sass-loader']
+        })
       }
     ]
   },
   plugins: [
-    new SystemBellPlugin()
+    new SystemBellPlugin(),
+    new ExtractTextPlugin("styles.css")
   ]
 };
 
@@ -76,7 +85,7 @@ const siteCommon = {
 const dev = merge(common, siteCommon, {
   devtool: 'eval-source-map',
   entry: {
-    myComponent: [config.paths.myComponent]
+    example: [config.paths.example]
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -88,7 +97,10 @@ const dev = merge(common, siteCommon, {
     loaders: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
       },
       {
         test: /\.js$/,
@@ -99,7 +111,7 @@ const dev = merge(common, siteCommon, {
           }
         },
         include: [
-          config.paths.myComponent,
+          config.paths.example,
           config.paths.src
         ]
       }
@@ -117,7 +129,7 @@ const dev = merge(common, siteCommon, {
 
 const ghPages = merge(common, siteCommon, {
   entry: {
-    app: config.paths.myComponent
+    app: config.paths.example
   },
   output: {
     path: config.paths.ghPages,
@@ -160,7 +172,7 @@ const ghPages = merge(common, siteCommon, {
         test: /\.js$/,
         use: 'babel-loader',
         include: [
-          config.paths.myComponent,
+          config.paths.example,
           config.paths.src
         ]
       }
