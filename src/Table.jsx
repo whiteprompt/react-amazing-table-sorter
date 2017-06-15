@@ -80,7 +80,7 @@ class Table extends Component {
       switch(child.type.name){
         case 'Tbody':
           this.state.data = [];
-          child.props.children.forEach(tr => this.collectData(tr));
+          child.props.children.forEach(row => this.collectData(row));
         break;
       }
     });
@@ -96,7 +96,6 @@ class Table extends Component {
 
   updateKey(index) {
     const sort = this.state.keys[index].sort;
-
     return update(this.state.keys, {
       [index]: {
         sort: {
@@ -155,8 +154,8 @@ class Table extends Component {
       }));
 
       return (a, b) => {
-        let result;
-        for(let i = 0; i < fields.length; i++){
+        let result, i = 0;
+        for(; i < fields.length; i++){
           result = fields[i].sort(a[fields[i].index].value, b[fields[i].index].value);
           if(result !== 0){
             break;
@@ -166,7 +165,11 @@ class Table extends Component {
       };
     };
 
-    return [...this.state.data].sort(multiSort(keys || this.state.sort.keys));
+    if((keys || this.state.sort.keys || []).length){
+      return [...this.state.data].sort(multiSort(keys || this.state.sort.keys));
+    }
+
+    return [...this.state.data];
   }
 
 	render(){
