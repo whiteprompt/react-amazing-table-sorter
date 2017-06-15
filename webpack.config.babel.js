@@ -4,7 +4,6 @@ import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import SystemBellPlugin from 'system-bell-webpack-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
 import merge from 'webpack-merge';
 
 const pkg = require('./package.json');
@@ -50,10 +49,16 @@ const common = {
         }
       },
       {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
+      },
+      {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          //resolve-url-loader may be chained before sass-loader if necessary
           use: ['css-loader', 'sass-loader']
         })
       }
@@ -61,7 +66,7 @@ const common = {
   },
   plugins: [
     new SystemBellPlugin(),
-    new ExtractTextPlugin("styles.css")
+    new ExtractTextPlugin('styles.css')
   ]
 };
 
@@ -96,14 +101,7 @@ const dev = merge(common, siteCommon, {
   module: {
     loaders: [
       {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: "css-loader"
-        })
-      },
-      {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -127,58 +125,6 @@ const dev = merge(common, siteCommon, {
   }
 });
 
-const ghPages = merge(common, siteCommon, {
-  entry: {
-    app: config.paths.example
-  },
-  output: {
-    path: config.paths.ghPages,
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[chunkhash].js'
-  },
-  plugins: [
-    new CleanWebpackPlugin(['gh-pages'], {
-      verbose: false
-    }),
-    new ExtractTextPlugin('[name].[chunkhash].css'),
-    new webpack.DefinePlugin({
-        // This affects the react lib size
-      'process.env.NODE_ENV': '"production"'
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: ({ resource }) => (
-        resource &&
-        resource.indexOf('node_modules') >= 0 &&
-        resource.match(/\.js$/)
-      )
-    })
-  ],
-  module: {
-    loaders: [
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader'
-        })
-      },
-      {
-        test: /\.js$/,
-        use: 'babel-loader',
-        include: [
-          config.paths.example,
-          config.paths.src
-        ]
-      }
-    ]
-  }
-});
 
 const distCommon = {
   devtool: 'source-map',
@@ -199,7 +145,7 @@ const distCommon = {
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: 'babel-loader',
         include: config.paths.src
       }
@@ -235,8 +181,7 @@ module.exports = (env) => {
   const targets = {
     dev,
     dist,
-    distMin,
-    ghPages
+    distMin
   };
 
   return targets[env] ? targets[env] : common;
