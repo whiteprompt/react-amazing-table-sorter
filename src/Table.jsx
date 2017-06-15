@@ -34,7 +34,6 @@ class Table extends Component {
   }
 
   collectKeys(row) {
-    // No re-render required
     this.state.keys = row.props.children.map((child, index) => ({
       child,
       index,
