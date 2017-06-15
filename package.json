@@ -103,6 +103,7 @@
   ],
   "dependencies": {
     "classnames": "^2.2.5",
+    "prop-types": "^15.5.10",
     "react-addons-update": "^15.5.2"
   }
 }

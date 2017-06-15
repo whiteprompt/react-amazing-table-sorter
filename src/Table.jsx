@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import classnames from 'classnames';
 
@@ -6,7 +7,6 @@ import Thead from './Table/Thead';
 import Tbody from './Table/Tbody';
 import Tr from './Table/Tr';
 import Th from './Table/Th';
-import Td from './Table/Td';
 
 import {
   SORT_NATURAL,
@@ -14,13 +14,12 @@ import {
   SORT_DOWN,
   TYPE_TEXT,
   TYPE_NUMBER,
-  TYPE_DATE,
+  TYPE_DATE
 } from './constants';
-
 
 class Table extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -42,12 +41,19 @@ class Table extends Component {
     }));
   }
 
-  collectData(row){
-    const getValue = (key, value) => key ? (
-      key.type === TYPE_NUMBER ? parseFloat(value, 10) :
-      key.type === TYPE_DATE   ? +new Date(value) || 0 :
-      String(value || '')
-    ) : value;
+  collectData(row) {
+    const getValue = (key, value) => {
+      if (!key) {
+        return value;
+      }
+      if (key.type === TYPE_NUMBER) {
+        return parseFloat(value, 10);
+      }
+      if (key.type === TYPE_DATE) {
+        return +new Date(value);
+      }
+      return String(value || '');
+    };
 
     this.state.data.push(row.props.children.map((child, i) => ({
       child,
@@ -55,32 +61,23 @@ class Table extends Component {
     })));
   }
 
-  componentWillMount(){
-    this.props.children.map((child) => {
-      switch(child.type.name){
-        case 'Thead':
-          const row = child.props.children;
-          if (row) {
-            this.collectKeys(row);
-          }
-        break;
-
-        case 'Tbody':
-          child.props.children.forEach(row => this.collectData(row));
-        break;
+  componentWillMount() {
+    this.props.children.forEach((child) => {
+      if (child.type.name === 'Thead' && child.props.children) {
+        this.collectKeys(child.props.children);
+      } else if (child.type.name === 'Tbody') {
+        child.props.children.forEach(row => this.collectData(row));
       }
     });
 
     this.state.sort.data = this.sort();
   }
 
-  componentWillReceiveProps(nextProps){
-    nextProps.children.map((child) => {
-      switch(child.type.name){
-        case 'Tbody':
-          this.state.data = [];
-          child.props.children.forEach(row => this.collectData(row));
-        break;
+  componentWillReceiveProps(nextProps) {
+    nextProps.children.forEach((child) => {
+      if (child.type.name === 'Tbody') {
+        this.state.data = [];
+        child.props.children.forEach(row => this.collectData(row));
       }
     });
 
@@ -117,8 +114,8 @@ class Table extends Component {
     });
   }
 
-  getSortKeys(index){
-    let keys = [...this.state.sort.keys];
+  getSortKeys(index) {
+    const keys = [...this.state.sort.keys];
     let sort = SORT_NATURAL;
 
     if (!~keys.findIndex(key => key.index === index)) {
@@ -126,10 +123,10 @@ class Table extends Component {
     }
 
     return keys.map((key) => {
-      let sort = key.sort;
+      sort = key.sort;
 
       if (key.index === index) {
-         sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL
+        sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL
       }
 
       return { ...key, sort };
@@ -137,26 +134,26 @@ class Table extends Component {
     .filter(key => key.sort !== SORT_NATURAL);
   }
 
-  sort(keys){
-    const multiSort = (keys) => {
+  sort(keys) {
+    const multiSort = (params) => {
       const sort = direction => (a, b) => {
         let result = a === b ? 0 : a < b ? -1 : 1;
-        if(direction === SORT_DOWN){
+        if (direction === SORT_DOWN) {
           result *= -1;
         }
         return result;
-      }
+      };
 
-      const fields = keys.map(key => ({
+      const fields = params.map(key => ({
         ...key,
         sort: sort(key.sort)
       }));
 
       return (a, b) => {
-        let result, i = 0;
-        for(; i < fields.length; i++){
+        let result;
+        for (let i = 0; i < fields.length; i++) {
           result = fields[i].sort(a[fields[i].index].value, b[fields[i].index].value);
-          if(result !== 0){
+          if (result !== 0) {
             break;
           }
         }
@@ -164,15 +161,15 @@ class Table extends Component {
       };
     };
 
-    if((keys || this.state.sort.keys || []).length){
+    if ((keys || this.state.sort.keys || []).length) {
       return [...this.state.data].sort(multiSort(keys || this.state.sort.keys));
     }
 
     return [...this.state.data];
   }
 
-	render(){
-		return (
+  render() {
+    return (
       <table className={classnames('react-amazing-table-sorter', this.props.className)}>
         <Thead>
           <Tr>
@@ -194,7 +191,16 @@ class Table extends Component {
         </Tbody>
       </table>
     );
-	}
+  }
 }
+
+Table.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string
+};
+
+Table.defaultProps = {
+  className: null
+};
 
 export default Table;
