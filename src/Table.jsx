@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import update from 'react-addons-update';
 import classnames from 'classnames';
 
 import Thead from './Table/Thead';
@@ -32,35 +31,6 @@ class Table extends Component {
     };
   }
 
-  collectKeys(row) {
-    this.state.keys = row.props.children.map((child, index) => ({
-      child,
-      index,
-      sort: SORT_NATURAL,
-      type: child.props && child.props.sort ? child.props.sort : TYPE_TEXT
-    }));
-  }
-
-  collectData(row) {
-    const getValue = (key, value) => {
-      if (!key) {
-        return value;
-      }
-      if (key.type === TYPE_NUMBER) {
-        return parseFloat(value, 10);
-      }
-      if (key.type === TYPE_DATE) {
-        return +new Date(value);
-      }
-      return String(value || '');
-    };
-
-    this.state.data.push(row.props.children.map((child, i) => ({
-      child,
-      value: getValue(this.state.keys[i], 'sort' in child.props ? child.props.sort : child.props.children)
-    })));
-  }
-
   componentWillMount() {
     this.props.children.forEach((child) => {
       if (child.type.name === 'Thead' && child.props.children) {
@@ -82,7 +52,6 @@ class Table extends Component {
     });
 
     this.setState({
-      ...this.state,
       sort: {
         ...this.state.sort,
         data: this.sort()
@@ -90,19 +59,67 @@ class Table extends Component {
     });
   }
 
-  updateKey(index) {
-    const sort = this.state.keys[index].sort;
-    return update(this.state.keys, {
-      [index]: {
-        sort: {
-          $set: sort === SORT_UP ? SORT_DOWN : (sort === SORT_NATURAL ? SORT_UP : SORT_NATURAL)
-        }
+  collectKeys(row) {
+    this.state.keys = row.props.children.map((child, index) => ({
+      child,
+      index,
+      sort: SORT_NATURAL,
+      type: child.props && child.props.sort ? child.props.sort : TYPE_TEXT
+    }));
+  }
+
+  collectData(row) {
+    if (row.length && row.forEach) {
+      return row.forEach(child => this.collectData(child));
+    }
+
+    if (!row.props.children || row.props.children.length !== this.state.keys.length) {
+      return;
+    }
+
+    const getValue = (key, value) => {
+      if (!key) {
+        return value;
       }
+      if (key.type === TYPE_NUMBER) {
+        return parseFloat(value, 10);
+      }
+      if (key.type === TYPE_DATE) {
+        return +new Date(value);
+      }
+      return String(value || '');
+    };
+
+    this.state.data.push(row.props.children.map((child, i) => ({
+      child,
+      value: getValue(this.state.keys[i], 'sort' in child.props ? child.props.sort : child.props.children)
+    })));
+  }
+
+  updateKeys(keys, index) {
+    return keys.map((key) => {
+      let sort = key.sort;
+
+      if (key.index === index) {
+        sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL
+      }
+
+      return { ...key, sort };
     });
   }
 
+  getSortKeys(index) {
+    const keys = [...this.state.sort.keys];
+
+    if (!~keys.findIndex(key => key.index === index)) {
+      keys.push({ index, sort: SORT_NATURAL });
+    }
+
+    return this.updateKeys(keys, index).filter(key => key.sort !== SORT_NATURAL);
+  }
+
   handleSort(index) {
-    const keys = this.updateKey(index);
+    const keys = this.updateKeys(this.state.keys, index);
     const sortKeys = this.getSortKeys(index);
 
     this.setState({
@@ -114,34 +131,11 @@ class Table extends Component {
     });
   }
 
-  getSortKeys(index) {
-    const keys = [...this.state.sort.keys];
-    let sort = SORT_NATURAL;
-
-    if (!~keys.findIndex(key => key.index === index)) {
-      keys.push({ index, sort });
-    }
-
-    return keys.map((key) => {
-      sort = key.sort;
-
-      if (key.index === index) {
-        sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL
-      }
-
-      return { ...key, sort };
-    })
-    .filter(key => key.sort !== SORT_NATURAL);
-  }
-
-  sort(keys) {
+  sort(keys = this.state.sort.keys) {
     const multiSort = (params) => {
       const sort = direction => (a, b) => {
-        let result = a === b ? 0 : a < b ? -1 : 1;
-        if (direction === SORT_DOWN) {
-          result *= -1;
-        }
-        return result;
+        const result = a === b ? 0 : a < b ? -1 : 1;
+        return result * (direction === SORT_DOWN ? -1 : 1);
       };
 
       const fields = params.map(key => ({
@@ -161,11 +155,13 @@ class Table extends Component {
       };
     };
 
-    if ((keys || this.state.sort.keys || []).length) {
-      return [...this.state.data].sort(multiSort(keys || this.state.sort.keys));
+    const data = [...this.state.data];
+
+    if (keys.length) {
+      data.sort(multiSort(keys));
     }
 
-    return [...this.state.data];
+    return data;
   }
 
   render() {
