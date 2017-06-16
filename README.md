@@ -19,7 +19,7 @@ Sort table rows by multiple columns.
 /* eslint-disable global-require, import/no-unresolved, react/no-multi-comp */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Table, Thead, Tbody, Tr, Th, Td } from '../src';
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-amazing-table-sorter';
 
 import './main.scss';
 
