@@ -5,7 +5,7 @@
 
 body {
   cursor: default;
-  color: #555;
+  color: #666;
   font-family: sans-serif;
 }
 
@@ -16,11 +16,14 @@ table {
   td, th {
     padding: 15px;
     border-bottom: 1px solid #EEE;
+    font-weight: normal;
   }
 
   th {
     background-color: #F8F8F8;
     text-align: left;
+    color: #333;
+    cursor: pointer;
   }
 
   tr:nth-of-type(even) td {

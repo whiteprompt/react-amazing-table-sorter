@@ -3,13 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table, Thead, Tbody, Tr, Th, Td } from '../src';
 
-import './main.scss';
-
+import './example.scss';
 
 const province = (name, population, area, date) => ({
   name, population, area, date
 });
-
 
 const data = [
   province('Ciudad de Buenos Aires', 2891082, 203, new Date(1536, 1, 2)),
@@ -42,7 +40,7 @@ ReactDOM.render(
   <Table>
     <Thead>
       <Tr>
-        <Th>Name</Th>
+        <Th className="custom-class-1">Name</Th>
         <Th sort="number">Population</Th>
         <Th sort="number">Area (km2)</Th>
         <Th sort="date">Foundation date</Th>
@@ -51,7 +49,7 @@ ReactDOM.render(
     <Tbody>
       {data.map(row => (
         <Tr key={row.name}>
-          <Td>{row.name}</Td>
+          <Td className="custom-class-2">{row.name}</Td>
           <Td sort={row.population}>{row.population.toLocaleString()}</Td>
           <Td sort={row.area}>{row.area.toLocaleString()}</Td>
           <Td sort={row.date}>{row.date.toString()}</Td>
