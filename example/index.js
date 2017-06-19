@@ -54,7 +54,7 @@ ReactDOM.render(
           <Td sort={row.population}>{row.population.toLocaleString()}</Td>
           <Td sort={row.area}>{row.area.toLocaleString()}</Td>
           <Td sort={row.date}>{row.date.toString()}</Td>
-          <Td><a href="#">view</a></Td>
+          <Td><a href="#example">view</a></Td>
         </Tr>
       ))}
     </Tbody>
