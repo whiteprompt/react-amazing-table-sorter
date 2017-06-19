@@ -1,4 +1,3 @@
-import React from 'react';
 import Table from './Table';
 import Thead from './Table/Thead';
 import Tbody from './Table/Tbody';

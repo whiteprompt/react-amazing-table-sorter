@@ -44,6 +44,7 @@ ReactDOM.render(
         <Th sort="number">Population</Th>
         <Th sort="number">Area (km2)</Th>
         <Th sort="date">Foundation date</Th>
+        <Th sort="none">Actions</Th>
       </Tr>
     </Thead>
     <Tbody>
@@ -53,6 +54,7 @@ ReactDOM.render(
           <Td sort={row.population}>{row.population.toLocaleString()}</Td>
           <Td sort={row.area}>{row.area.toLocaleString()}</Td>
           <Td sort={row.date}>{row.date.toString()}</Td>
+          <Td><a href="#">view</a></Td>
         </Tr>
       ))}
     </Tbody>

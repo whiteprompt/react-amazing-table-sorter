@@ -3,14 +3,22 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {
   SORT_UP,
-  SORT_DOWN
+  SORT_DOWN,
+  TYPE_NONE
 } from '../constants';
 
-const Th = ({ children, className, sort, handleSort }) => (
-  <th className={className} onClick={() => handleSort()}>
-    <span className={classnames({ '-sort-up': sort === SORT_UP, '-sort-down': sort === SORT_DOWN })}>
-      {children}
-    </span>
+const Th = ({ children, className, sort, type, handleSort }) => (
+  <th
+    className={classnames({ '-can-sort': type !== TYPE_NONE }, className)}
+    onClick={() => handleSort()}
+  >
+    {type === TYPE_NONE ? (
+      children
+    ) : (
+      <span className={classnames({ '-sort-up': sort === SORT_UP, '-sort-down': sort === SORT_DOWN })}>
+        {children}
+      </span>
+    )}
   </th>
 );
 
@@ -21,6 +29,7 @@ Th.propTypes = {
     PropTypes.string,
     PropTypes.number
   ]),
+  type: PropTypes.string,
   handleSort: PropTypes.func
 };
 
@@ -28,6 +37,7 @@ Th.defaultProps = {
   children: null,
   className: null,
   sort: null,
+  type: null,
   handleSort: () => {}
 };
 

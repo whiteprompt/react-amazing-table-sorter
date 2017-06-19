@@ -1,9 +1,9 @@
 .react-amazing-table-sorter {
-  th {
+  th.-can-sort {
     cursor: pointer;
   }
 
-  th span {
+  th.-can-sort span {
     position: relative;
 
     &:after {

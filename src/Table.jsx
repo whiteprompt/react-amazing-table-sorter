@@ -11,6 +11,7 @@ import {
   SORT_NATURAL,
   SORT_UP,
   SORT_DOWN,
+  TYPE_NONE,
   TYPE_TEXT,
   TYPE_NUMBER,
   TYPE_DATE
@@ -74,7 +75,7 @@ class Table extends Component {
     }
 
     if (!row.props.children || row.props.children.length !== this.state.keys.length) {
-      return;
+      return null;
     }
 
     const getValue = (key, value) => {
@@ -90,7 +91,7 @@ class Table extends Component {
       return String(value || '');
     };
 
-    this.state.data.push(row.props.children.map((child, i) => ({
+    return this.state.data.push(row.props.children.map((child, i) => ({
       child,
       value: getValue(this.state.keys[i], 'sort' in child.props ? child.props.sort : child.props.children)
     })));
@@ -101,7 +102,7 @@ class Table extends Component {
       let sort = key.sort;
 
       if (key.index === index) {
-        sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL
+        sort = key.sort === SORT_NATURAL ? SORT_UP : key.sort === SORT_UP ? SORT_DOWN : SORT_NATURAL;
       }
 
       return { ...key, sort };
@@ -119,16 +120,18 @@ class Table extends Component {
   }
 
   handleSort(index) {
-    const keys = this.updateKeys(this.state.keys, index);
-    const sortKeys = this.getSortKeys(index);
+    if (!this.state.keys[index] || this.state.keys[index].type !== TYPE_NONE) {
+      const keys = this.updateKeys(this.state.keys, index);
+      const sortKeys = this.getSortKeys(index);
 
-    this.setState({
-      keys,
-      sort: {
-        keys: sortKeys,
-        data: this.sort(sortKeys)
-      }
-    });
+      this.setState({
+        keys,
+        sort: {
+          keys: sortKeys,
+          data: this.sort(sortKeys)
+        }
+      });
+    }
   }
 
   sort(keys = this.state.sort.keys) {
@@ -170,7 +173,7 @@ class Table extends Component {
         <Thead>
           <Tr>
             {this.state.keys.map((item, i) => (
-              <Th sort={item.sort} handleSort={() => this.handleSort(i)} key={`th-${i}`} className={item.child.props.className}>
+              <Th sort={item.sort} type={item.type} handleSort={() => this.handleSort(i)} key={`th-${i}`} className={item.child.props.className}>
                 {item.child.props.children}
               </Th>
             ))}
