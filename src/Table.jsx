@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import Thead from './Table/Thead';
+import Tfoot from './Table/Tfoot';
 import Tbody from './Table/Tbody';
 import Tr from './Table/Tr';
 import Th from './Table/Th';
@@ -38,6 +39,9 @@ class Table extends Component {
         this.collectKeys(child.props.children);
       } else if (child.type.name === 'Tbody') {
         child.props.children.forEach(row => this.collectData(row));
+      } else if (child.type.name === 'Tfoot') {
+        this.state.hasTfoot = true;
+        this.state.Tfoot = child;
       }
     });
 
@@ -179,6 +183,9 @@ class Table extends Component {
             ))}
           </Tr>
         </Thead>
+        {this.state.hasTfoot && (
+          <Tfoot>{this.state.Tfoot.props.children}</Tfoot>
+        )}
         <Tbody>
           {this.state.sort.data.map((tr, i) => (
             <Tr key={`tr-${i}`}>
