@@ -2,7 +2,7 @@
   "name": "react-amazing-table-sorter",
   "description": "Sort table rows by multiple columns",
   "author": "Sebastian Azagra Sinatra <sebastian.azagra@whiteprompt.com>",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "start": "webpack-dev-server --env dev",
     "test": "jest",
