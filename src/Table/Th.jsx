@@ -7,9 +7,10 @@ import {
   TYPE_NONE
 } from '../constants';
 
-const Th = ({ children, className, sort, type, handleSort }) => (
+const Th = ({ children, className, style, sort, type, handleSort }) => (
   <th
     className={classnames({ '-can-sort': type !== TYPE_NONE }, className)}
+    style={style}
     onClick={() => handleSort()}
   >
     {type === TYPE_NONE ? (

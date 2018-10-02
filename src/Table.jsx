@@ -177,7 +177,14 @@ class Table extends Component {
         <Thead>
           <Tr>
             {this.state.keys.map((item, i) => (
-              <Th sort={item.sort} type={item.type} handleSort={() => this.handleSort(i)} key={`th-${i}`} className={item.child.props.className}>
+              <Th
+                key={`th-${i}`}
+                sort={item.sort}
+                type={item.type}
+                handleSort={() => this.handleSort(i)}
+                className={item.child.props.className}
+                style={item.child.props.style}
+              >
                 {item.child.props.children}
               </Th>
             ))}
