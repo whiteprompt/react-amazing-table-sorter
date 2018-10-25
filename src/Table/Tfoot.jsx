@@ -11,6 +11,7 @@ Tfoot.propTypes = {
 };
 
 Tfoot.defaultProps = {
+  nodeType: 'tfoot',
   children: null,
   className: null
 };

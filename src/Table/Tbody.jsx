@@ -11,6 +11,7 @@ Tbody.propTypes = {
 };
 
 Tbody.defaultProps = {
+  nodeType: 'tbody',
   children: null,
   className: null
 };

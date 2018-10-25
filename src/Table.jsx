@@ -35,11 +35,13 @@ class Table extends Component {
 
   componentWillMount() {
     this.props.children.forEach((child) => {
-      if (child.type.name === 'Thead' && child.props.children) {
+      if (child.props.nodeType === 'thead' && child.props.children) {
         this.collectKeys(child.props.children);
-      } else if (child.type.name === 'Tbody') {
+      }
+      else if (child.props.nodeType === 'tbody') {
         child.props.children.forEach(row => this.collectData(row));
-      } else if (child.type.name === 'Tfoot') {
+      }
+      else if (child.props.nodeType === 'tfoot') {
         this.state.hasTfoot = true;
         this.state.Tfoot = child;
       }
@@ -50,7 +52,7 @@ class Table extends Component {
 
   componentWillReceiveProps(nextProps) {
     nextProps.children.forEach((child) => {
-      if (child.type.name === 'Tbody') {
+      if (child.props.nodeType === 'tbody') {
         this.state.data = [];
         child.props.children.forEach(row => this.collectData(row));
       }

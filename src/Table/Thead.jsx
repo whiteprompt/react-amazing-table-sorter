@@ -11,6 +11,7 @@ Thead.propTypes = {
 };
 
 Thead.defaultProps = {
+  nodeType: 'thead',
   className: null
 };
 
